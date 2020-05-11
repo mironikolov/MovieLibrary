@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@if (Model.Movie.Id == 0)
+@if (Model.Id == 0)
 {
     <h2>New Move</h2>
 }
@@ -15,27 +15,36 @@ else
 
 @using (Html.BeginForm("Save", "Movies"))
 {
+    @Html.ValidationSummary(true, "Please fix errors")
     <div class="form-group">
-        @Html.LabelFor(m => m.Movie.Name)
-        @Html.TextBoxFor(m => m.Movie.Name, new { @class = "form-control" })
+        @Html.LabelFor(m => m.Name)
+        @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+        @Html.ValidationMessageFor( m => m.Name )
     </div>
 
     <div class="form-group">
-        @Html.LabelFor(m => m.Movie.ReleaseDate)
-        @Html.TextBoxFor(m => m.Movie.ReleaseDate, "{0: d MMM yyyy}", new { @class = "form-control" })
+        @Html.LabelFor(m => m.ReleaseDate)
+        @Html.TextBoxFor(m => m.ReleaseDate, "{0: d MMM yyyy}", new { @class = "form-control" })
+        @Html.ValidationMessageFor( m => m.ReleaseDate )
     </div>
 
     <div class="form-group">
-        @Html.LabelFor(Model => Model.Movie.Genre)
-        @Html.DropDownListFor(Model => Model.Movie.GenreId, new SelectList(Model.Genres, "Id", "Name"), "Select Genre", new { @class = "form-control" })
+        @Html.LabelFor(Model => Model.GenreId)
+        @Html.DropDownListFor(Model => Model.GenreId, new SelectList(Model.Genres, "Id", "Name"), "Select Genre", new { @class = "form-control" })
+        @Html.ValidationMessageFor( m => m.GenreId )
     </div>
 
     <div class="form-group">
-        @Html.LabelFor(m => m.Movie.NumberInStock, "Number in Stock")
-        @Html.TextBoxFor(m => m.Movie.NumberInStock, new { @class = "form-control" })
+        @Html.LabelFor(m => m.NumberInStock, "Number in Stock")
+        @Html.TextBoxFor(m => m.NumberInStock, new { @class = "form-control" })
+        @Html.ValidationMessageFor( m => m.NumberInStock )
     </div>
 
-    @Html.HiddenFor( m => m.Movie.Id )
+    @Html.HiddenFor( m => m.Id )
+    @Html.AntiForgeryToken()
     <button type="submit" class="btn btn-primary"> Save </button>
 }
 
+@section scripts {
+    @Scripts.Render( "~/bundles/jqueryval" )    
+}
