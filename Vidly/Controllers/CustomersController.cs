@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using System.Data.Entity;
 using Vidly.Models;
 using Vidly.ViewModel;
+using System.Runtime.Caching;
 
 namespace Vidly.Controllers
 {
@@ -25,6 +26,13 @@ namespace Vidly.Controllers
         // GET: Customers
         public ActionResult Index()
         {
+            //Data Caching example
+            if (MemoryCache.Default["Genres"] == null )
+            {
+                MemoryCache.Default["Genres"] = _context.Genres.ToList();
+            }
+            var genres = MemoryCache.Default["Genres"] as IEnumerable<Genre>;
+
             return View();
         }
 

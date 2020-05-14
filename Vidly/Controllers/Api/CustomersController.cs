@@ -20,13 +20,27 @@ namespace Vidly.Controllers.Api
             _context = new ApplicationDbContext();
         }
 
-        // GET /api/customers
-        public IEnumerable<CustomerDto> GetCusomers()
+        protected override void Dispose(bool disposing)
         {
-            return _context.Customers
-                .Include( c => c.MembershipType )
+            _context.Dispose();
+        }
+
+        // GET /api/customers
+        public IHttpActionResult GetCusomers(string query = null)
+        {
+            var customersQuery = _context.Customers
+                .Include(c => c.MembershipType);
+
+            if (!String.IsNullOrWhiteSpace(query))
+            {
+                customersQuery = customersQuery.Where( c => c.Name.Contains(query));
+            }
+
+            var customerDtos = customersQuery
                 .ToList()
                 .Select( Mapper.Map<Customer, CustomerDto> );
+
+            return Ok(customerDtos);
         }
 
         //GET /api/customers/1

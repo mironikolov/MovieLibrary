@@ -20,14 +20,28 @@ namespace Vidly.Controllers.Api
             _context = new ApplicationDbContext();
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            _context.Dispose();
+        }
+
         //GET /api/movies
         [HttpGet]
-        public IHttpActionResult GetMovies()
+        public IHttpActionResult GetMovies( string query = null )
         {
-            return Ok( _context.Movies
-                .Include( m => m.Genre )
+            var moviesQuery = _context.Movies
+                .Include(m => m.Genre);
+
+            if (!String.IsNullOrWhiteSpace(query))
+            {
+                moviesQuery = moviesQuery.Where(m => m.Name.Contains(query) && m.NumberAvailable > 0 );
+            }
+
+            var movieDtos = moviesQuery
                 .ToList()
-                .Select( Mapper.Map<Movie, MovieDto> ) );
+                .Select(Mapper.Map<Movie, MovieDto>);
+
+            return Ok( movieDtos );
         }
 
         //GET /api/movies/1
